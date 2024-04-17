@@ -1,6 +1,7 @@
 package org.bootstrap.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bootstrap.member.aws.S3Service;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
@@ -12,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.bootstrap.member.exception.MemberNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional
@@ -20,6 +24,8 @@ public class MemberService {
     
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Service s3Service;
+    public static final String PROFILE_IMAGE_DIRECTORY = "profile";
 
     public MemberProfileResponseDto getMemberProfile(Long memberId) {
         Member member = findByIdOrThrow(memberId);
@@ -42,6 +48,12 @@ public class MemberService {
         member.updatePassword(encodedPassword);
     }
 
+    public void updateProfileImage(Long memberId, MultipartFile profileImage){
+        Member member = findByIdOrThrow(memberId);
+        String profileImgUrl = checkProfileImageAndGetUrl(profileImage, member.getMoldevId());
+        member.updateProfileImage(profileImgUrl);
+    }
+
     private void validatePassword(String inputPassword, String encodedPassword) {
         if (!passwordEncoder.matches(inputPassword, encodedPassword)) {
             throw PasswordWrongException.EXCEPTION;
@@ -55,6 +67,27 @@ public class MemberService {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    private String checkProfileImageAndGetUrl(MultipartFile profileImage, String moldevId) {
+        if (Objects.isNull(profileImage))
+            return getDefaultProfileImgUrl();
+        else
+            return uploadProfileImage(profileImage, moldevId);
+    }
+
+    private String uploadProfileImage(MultipartFile profileImage, String moldevId) {
+        String imageFileName = generateProfileImageFileName(Objects.requireNonNull(profileImage.getOriginalFilename()), moldevId);
+        return s3Service.uploadFile(profileImage, imageFileName, PROFILE_IMAGE_DIRECTORY);
+    }
+
+    private String getDefaultProfileImgUrl() {
+        return s3Service.getFileUrl(PROFILE_IMAGE_DIRECTORY + "/default.png");
+    }
+
+    private String generateProfileImageFileName(String originalFileName, String moldevId) {
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        return moldevId + extension;
     }
 
 }

@@ -42,4 +42,8 @@ public class Member extends BaseTimeEntity {
         this.password = encodedPassword;
     }
 
+    public void updateProfileImage(String profileImgUrl){
+        this.profileImgUrl = profileImgUrl;
+    }
+
 }
