@@ -9,9 +9,10 @@ import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @RestController
 public class MemberController {
     private final MemberService memberService;
@@ -40,6 +41,13 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<?>> updatePassword(@RequestHeader("Authorization") Long memberId,
                                                              @RequestBody PasswordPatchRequestDto passwordPatchRequestDto){
         memberService.updatePassword(memberId, passwordPatchRequestDto);
+        return SuccessResponse.ok(null);
+    }
+
+    @PatchMapping("/profile-image")
+    public ResponseEntity<SuccessResponse<?>> updateProfileImage(@RequestHeader("Authorization") Long memberId,
+                                                                 @RequestPart(required = false) MultipartFile profileImage){
+        memberService.updateProfileImage(memberId, profileImage);
         return SuccessResponse.ok(null);
     }
 
