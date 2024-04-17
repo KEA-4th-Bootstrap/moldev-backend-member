@@ -2,6 +2,7 @@ package org.bootstrap.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.common.SuccessResponse;
+import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.service.MemberService;
@@ -24,6 +25,13 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<?>> patchMyProfile(@RequestHeader("Authorization") Long memberId,
                                                              @RequestBody ProfilePatchRequestDto profilePatchRequestDto){
         memberService.patchMemberProfile(memberId, profilePatchRequestDto);
+        return SuccessResponse.ok(null);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<SuccessResponse<?>> checkPassword(@RequestHeader("Authorization") Long memberId,
+                                                            @RequestBody PasswordCheckRequestDto passwordCheckRequestDto){
+        memberService.checkPassword(memberId, passwordCheckRequestDto);
         return SuccessResponse.ok(null);
     }
 
