@@ -3,6 +3,7 @@ package org.bootstrap.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.bootstrap.member.common.BaseTimeEntity;
+import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -30,5 +31,10 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "island_name")
     private String islandName;
+
+    public void updateProfile(ProfilePatchRequestDto profilePatchRequestDto){
+        this.islandName = profilePatchRequestDto.islandName();
+        this.nickname = profilePatchRequestDto.nickname();
+    }
 
 }
