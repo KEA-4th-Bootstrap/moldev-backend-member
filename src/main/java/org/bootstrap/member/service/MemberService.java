@@ -36,8 +36,6 @@ public class MemberService {
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
-        System.out.println(inputPassword);
-        System.out.println(encodedPassword);
         if (!passwordEncoder.matches(inputPassword, encodedPassword)) {
             throw PasswordWrongException.EXCEPTION;
         }
