@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MemberController {
     private final MemberService memberService;
-//    private AuthorizationExtractor authExtractor;
 
     @GetMapping("/my")
     public ResponseEntity<SuccessResponse<?>> getPost(@RequestHeader("Authorization") String authHeader) {
