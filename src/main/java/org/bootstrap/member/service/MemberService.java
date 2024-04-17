@@ -2,6 +2,7 @@ package org.bootstrap.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
+import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.entity.Member;
@@ -35,6 +36,12 @@ public class MemberService {
         validatePassword(passwordCheckRequestDto.password(), member.getPassword());
     }
 
+    public void updatePassword(Long memberId, PasswordPatchRequestDto passwordPatchRequestDto){
+        Member member = findByIdOrThrow(memberId);
+        String encodedPassword = encodePassword(passwordPatchRequestDto.password());
+        member.updatePassword(encodedPassword);
+    }
+
     private void validatePassword(String inputPassword, String encodedPassword) {
         if (!passwordEncoder.matches(inputPassword, encodedPassword)) {
             throw PasswordWrongException.EXCEPTION;
@@ -44,6 +51,10 @@ public class MemberService {
     private Member findByIdOrThrow(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
+    }
+
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
 }
