@@ -17,8 +17,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/my")
-    public ResponseEntity<SuccessResponse<?>> getPost(@RequestHeader("Authorization") String authHeader) {
-        Long memberId = Long.parseLong(authHeader);
+    public ResponseEntity<SuccessResponse<?>> getPost(@RequestHeader("Authorization") Long memberId) {
         final MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
         return SuccessResponse.ok(responseDto);
     }
