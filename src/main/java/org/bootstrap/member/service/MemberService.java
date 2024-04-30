@@ -6,6 +6,7 @@ import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
+import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.exception.PasswordWrongException;
 import org.bootstrap.member.repository.MemberRepository;
@@ -27,7 +28,12 @@ public class MemberService {
     private final S3Service s3Service;
     public static final String PROFILE_IMAGE_DIRECTORY = "profile";
 
-    public MemberProfileResponseDto getMemberProfile(Long memberId) {
+    public MyProfileResponseDto getMyProfile(Long memberId) {
+        Member member = findByIdOrThrow(memberId);
+        return MyProfileResponseDto.of(member);
+    }
+
+    public MemberProfileResponseDto getMemberProfile(Long memberId){
         Member member = findByIdOrThrow(memberId);
         return MemberProfileResponseDto.of(member);
     }
