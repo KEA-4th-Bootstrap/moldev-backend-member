@@ -8,7 +8,6 @@ import org.bootstrap.member.entity.Member;
 public record MemberProfileResponseDto(
         String profileImgUrl,
         String moldevId,
-        String email,
         String nickname,
         String islandName
 ) {
@@ -16,7 +15,6 @@ public record MemberProfileResponseDto(
         return MemberProfileResponseDto.builder()
                 .profileImgUrl(member.getProfileImgUrl())
                 .moldevId(member.getMoldevId())
-                .email(member.getEmail())
                 .nickname(member.getNickname())
                 .islandName(member.getIslandName())
                 .build();
