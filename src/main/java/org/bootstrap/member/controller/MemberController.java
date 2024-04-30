@@ -6,6 +6,7 @@ import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
+import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class MemberController {
 
     @GetMapping("/my")
     public ResponseEntity<SuccessResponse<?>> getMyProfile(@RequestHeader("Authorization") Long memberId) {
-        final MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
+        final MyProfileResponseDto responseDto = memberService.getMyProfile(memberId);
         return SuccessResponse.ok(responseDto);
     }
 
@@ -49,6 +50,12 @@ public class MemberController {
                                                                  @RequestPart(required = false) MultipartFile profileImage){
         memberService.updateProfileImage(memberId, profileImage);
         return SuccessResponse.ok(null);
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<SuccessResponse<?>> getMemberProfile(@PathVariable Long memberId) {
+        final MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
+        return SuccessResponse.ok(responseDto);
     }
 
 }
