@@ -5,6 +5,7 @@ import lombok.*;
 import org.bootstrap.member.common.BaseTimeEntity;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
+import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -33,6 +34,9 @@ public class Member extends BaseTimeEntity {
     @Column(name = "island_name")
     private String islandName;
 
+    @Column(name = "view_count")
+    private Integer viewCount;
+
     public void updateProfile(ProfilePatchRequestDto profilePatchRequestDto){
         this.islandName = profilePatchRequestDto.islandName();
         this.nickname = profilePatchRequestDto.nickname();
@@ -46,4 +50,7 @@ public class Member extends BaseTimeEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
+    public void updateViewCount(Integer viewCount){
+        this.viewCount = viewCount;
+    }
 }
