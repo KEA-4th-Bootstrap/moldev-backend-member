@@ -76,7 +76,7 @@ public class MemberService {
     }
 
     public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response){
-        Member member = findByIdOrThrow(memberId);
+        final String MEMBER_ID = String.valueOf(memberId);
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElseGet(() -> new Cookie[0]);
@@ -84,13 +84,13 @@ public class MemberService {
                 .filter(c -> c.getName().equals("viewCount"))
                 .findFirst()
                 .orElseGet(() -> {
-                    valueOperations.increment(String.valueOf(member.getId()), 1L);
-                    return new Cookie("viewCount", String.valueOf(member.getId()));
+                    valueOperations.increment(MEMBER_ID, 1L);
+                    return new Cookie("viewCount", MEMBER_ID);
                 });
 
-        if (!cookie.getValue().contains(String.valueOf(member.getId()))){
-            valueOperations.increment(String.valueOf(member.getId()), 1L);
-            cookie.setValue(cookie.getValue() + String.valueOf(member.getId()));
+        if (!cookie.getValue().contains(MEMBER_ID)){
+            valueOperations.increment(MEMBER_ID, 1L);
+            cookie.setValue(cookie.getValue() + MEMBER_ID);
         }
 
         long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
@@ -134,6 +134,10 @@ public class MemberService {
     private String generateProfileImageFileName(String originalFileName, String moldevId) {
         String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
         return moldevId + extension;
+    }
+
+    private void applyCookie(HttpServletResponse response) {
+
     }
 
 }
