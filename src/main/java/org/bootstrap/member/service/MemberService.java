@@ -93,11 +93,7 @@ public class MemberService {
             cookie.setValue(cookie.getValue() + MEMBER_ID);
         }
 
-        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
-        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (todayEndSecond - currentSecond));
-        response.addCookie(cookie);
+        applyCookie(response, cookie);
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
@@ -136,8 +132,12 @@ public class MemberService {
         return moldevId + extension;
     }
 
-    private void applyCookie(HttpServletResponse response) {
-
+    private static void applyCookie(HttpServletResponse response, Cookie cookie) {
+        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
+        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) (todayEndSecond - currentSecond));
+        response.addCookie(cookie);
     }
 
 }
