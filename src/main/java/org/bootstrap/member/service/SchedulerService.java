@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,24 +23,35 @@ public class SchedulerService {
     private final MemberRepository memberRepository;
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void updateViewCount() {
-        Set<String> viewCountKeys = redisTemplate.keys("*");
-        if (viewCountKeys == null) {
-            return;
-        }
+    public void scheduleViewCount() {
+        Optional.ofNullable(redisTemplate.keys("*"))
+                .ifPresent(this::processKeys);
+    }
 
+    private void processKeys(Set<String> viewCountKeys) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         List<Long> keys = getKeyList(viewCountKeys);
-        List<Member> members = memberRepository.findAllById(keys);
+        List<Member> members = getExistMembersByKeys(keys);
 
-        members.forEach(member -> {
-            String key = String.valueOf(member.getId());
-            String value = valueOperations.getAndDelete(key);
-            assert value != null;
-            member.updateViewCount(member.getViewCount() + Integer.parseInt(value));
-        });
+        members.forEach(member -> updateMemberViewCount(member, valueOperations));
 
         memberRepository.saveAll(members);
+    }
+
+    private void updateMemberViewCount(Member member, ValueOperations<String, String> valueOperations) {
+        String key = String.valueOf(member.getId());
+        String value = valueOperations.getAndDelete(key);
+        if (value != null) {
+            member.updateViewCount(member.getViewCount() + Integer.parseInt(value));
+        }
+    }
+
+    private List<Member> getExistMembersByKeys(List<Long> keys) {
+        return keys.stream()
+                .map(memberRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     private List<Long> getKeyList(Set<String> keys) {
