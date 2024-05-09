@@ -3,6 +3,7 @@ package org.bootstrap.member.service;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.repository.MemberRepository;
+import org.bootstrap.member.utils.RedisUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,26 +21,30 @@ import java.util.stream.Collectors;
 public class SchedulerService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final RedisUtils redisUtils;
     private final MemberRepository memberRepository;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void scheduleViewCount() {
-        Optional.ofNullable(redisTemplate.keys("*"))
+        Optional.ofNullable(redisUtils.getKeys("*"))
                 .ifPresent(this::processKeys);
     }
 
     private void processKeys(Set<String> viewCountKeys) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         List<Long> keys = getKeyList(viewCountKeys);
         List<Member> members = getExistMembersByKeys(keys);
 
-        members.forEach(member -> updateMemberViewCount(member, valueOperations));
+        members.stream()
+                .peek(this::updateMemberViewCount)
+                .collect(Collectors.toList());
+
 
         memberRepository.saveAll(members);
     }
 
-    private void updateMemberViewCount(Member member, ValueOperations<String, String> valueOperations) {
+    private void updateMemberViewCount(Member member) {
         String key = String.valueOf(member.getId());
+        ValueOperations<String, String> valueOperations = redisUtils.getValueOperations();
         String value = valueOperations.getAndDelete(key);
         if (value != null) {
             member.updateViewCount(member.getViewCount() + Integer.parseInt(value));

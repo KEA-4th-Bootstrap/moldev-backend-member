@@ -11,16 +11,15 @@ import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.entity.Member;
+import org.bootstrap.member.exception.MemberNotFoundException;
 import org.bootstrap.member.exception.PasswordWrongException;
 import org.bootstrap.member.repository.MemberRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.bootstrap.member.utils.CookieUtils;
+import org.bootstrap.member.utils.RedisUtils;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.bootstrap.member.exception.MemberNotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -29,18 +28,16 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class MemberService {
 
-    private static final Logger log = LoggerFactory.getLogger(MemberService.class);
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisUtils redisUtils;
     public static final String PROFILE_IMAGE_DIRECTORY = "profile";
 
     public MyProfileResponseDto getMyProfile(Long memberId) {
@@ -77,23 +74,18 @@ public class MemberService {
 
     public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response){
         final String MEMBER_ID = String.valueOf(memberId);
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, String> valueOperations = redisUtils.getValueOperations();
 
-        Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElseGet(() -> new Cookie[0]);
-        Cookie cookie = Arrays.stream(cookies)
-                .filter(c -> c.getName().equals("viewCount"))
-                .findFirst()
-                .orElseGet(() -> {
-                    valueOperations.increment(MEMBER_ID, 1L);
-                    return new Cookie("viewCount", MEMBER_ID);
-                });
+        Cookie[] cookies = CookieUtils.getCookies(request);
+        Cookie cookie = getViewCountCookieFromCookies(cookies);
 
         if (!cookie.getValue().contains(MEMBER_ID)){
             valueOperations.increment(MEMBER_ID, 1L);
             cookie.setValue(cookie.getValue() + MEMBER_ID);
         }
 
-        applyCookie(response, cookie);
+        int maxAge = getMaxAge();
+        CookieUtils.addCookieWithMaxAge(response, cookie, maxAge);
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
@@ -132,12 +124,25 @@ public class MemberService {
         return moldevId + extension;
     }
 
-    private static void applyCookie(HttpServletResponse response, Cookie cookie) {
-        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
-        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+    private void applyCookie(HttpServletResponse response, Cookie cookie) {
+        int maxAge = getMaxAge();
         cookie.setPath("/");
-        cookie.setMaxAge((int) (todayEndSecond - currentSecond));
+        cookie.setMaxAge(maxAge);
         response.addCookie(cookie);
     }
+
+    private Cookie getViewCountCookieFromCookies(Cookie[] cookies) {
+        return Arrays.stream(cookies)
+                .filter(c -> c.getName().equals("viewCount"))
+                .findFirst()
+                .orElseGet(() -> CookieUtils.createCookie("viewCount", ""));
+    }
+
+    private int getMaxAge() {
+        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
+        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        return (int) (todayEndSecond - currentSecond);
+    }
+
 
 }
