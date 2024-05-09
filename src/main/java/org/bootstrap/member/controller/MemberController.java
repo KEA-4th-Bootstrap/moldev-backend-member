@@ -1,5 +1,7 @@
 package org.bootstrap.member.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.common.SuccessResponse;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
@@ -56,6 +58,14 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<?>> getMemberProfile(@PathVariable Long memberId) {
         final MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
         return SuccessResponse.ok(responseDto);
+    }
+
+    @PostMapping("/{memberId}")
+    public ResponseEntity<SuccessResponse<?>> checkMemberPassword(@PathVariable Long memberId,
+                                                                  HttpServletRequest request,
+                                                                  HttpServletResponse response){
+        memberService.viewCountUpByCookie(memberId, request, response);
+        return SuccessResponse.ok(null);
     }
 
 }
