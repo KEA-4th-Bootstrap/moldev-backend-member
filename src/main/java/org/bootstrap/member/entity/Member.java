@@ -37,6 +37,9 @@ public class Member extends BaseTimeEntity {
     @Column(name = "view_count")
     private Integer viewCount;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Ban ban;
+
     public void updateProfile(ProfilePatchRequestDto profilePatchRequestDto){
         this.islandName = profilePatchRequestDto.islandName();
         this.nickname = profilePatchRequestDto.nickname();
