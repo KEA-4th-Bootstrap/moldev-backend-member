@@ -30,7 +30,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -90,6 +92,11 @@ public class MemberService {
 
         int maxAge = getMaxAge();
         CookieUtils.addCookieWithMaxAge(response, cookie, maxAge);
+    }
+
+    public List<MemberProfileResponseDto> getMembersProfile(List<Long> ids){
+        List<MemberProfileResponseDto> memberByIds = findMemberByIds(ids);
+        return memberByIds;
     }
 
     public void banMember(BanRequestDto banRequestDto) {
@@ -155,5 +162,10 @@ public class MemberService {
         return (int) (todayEndSecond - currentSecond);
     }
 
+    private List<MemberProfileResponseDto> findMemberByIds(List<Long> ids) {
+        return memberRepository.findAllById(ids).stream()
+                .map(MemberProfileResponseDto::of)
+                .collect(Collectors.toList());
+    }
 
 }

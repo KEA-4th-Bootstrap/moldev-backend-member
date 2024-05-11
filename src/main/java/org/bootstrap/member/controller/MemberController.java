@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @RestController
@@ -75,5 +77,10 @@ public class MemberController {
         return SuccessResponse.ok(null);
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<SuccessResponse<?>> getMembersInfo(final @RequestParam List<Long> ids) {
+        final List<MemberProfileResponseDto> response = memberService.getMembersProfile(ids);
+        return SuccessResponse.ok(response);
+    }
 
 }
