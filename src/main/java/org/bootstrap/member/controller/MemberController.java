@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.common.SuccessResponse;
+import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
@@ -67,6 +68,12 @@ public class MemberController {
                                                                   HttpServletRequest request,
                                                                   HttpServletResponse response){
         memberService.viewCountUpByCookie(memberId, request, response);
+        return SuccessResponse.ok(null);
+    }
+
+    @PostMapping("/ban")
+    public ResponseEntity<SuccessResponse<?>> banMember(@RequestBody BanRequestDto banRequestDto){
+        memberService.banMember(banRequestDto);
         return SuccessResponse.ok(null);
     }
 

@@ -5,14 +5,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.aws.S3Service;
+import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
+import org.bootstrap.member.entity.Ban;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.exception.MemberNotFoundException;
 import org.bootstrap.member.exception.PasswordWrongException;
+import org.bootstrap.member.repository.BanRepository;
 import org.bootstrap.member.repository.MemberRepository;
 import org.bootstrap.member.utils.CookieUtils;
 import org.bootstrap.member.utils.RedisUtils;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BanRepository banRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Service s3Service;
     private final RedisUtils redisUtils;
@@ -93,6 +97,13 @@ public class MemberService {
     public List<MemberProfileResponseDto> getMembersProfile(List<Long> ids){
         List<MemberProfileResponseDto> memberByIds = findMemberByIds(ids);
         return memberByIds;
+    }
+
+    public void banMember(BanRequestDto banRequestDto) {
+        Member member = findByIdOrThrow(banRequestDto.memberId());
+        LocalDateTime unbanDate = LocalDateTime.now().plusDays(banRequestDto.banDays());
+        Ban ban = Ban.of(member, unbanDate, banRequestDto.reasonCode());
+        banRepository.save(ban);
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
