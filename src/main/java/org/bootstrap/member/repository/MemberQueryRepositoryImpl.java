@@ -15,11 +15,11 @@ import static org.bootstrap.member.entity.QMember.member;
 
 @Repository
 @RequiredArgsConstructor
-public class MemberQueryRepositoryImpl implements MemberQueryRepository{
+public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Pageable pageable) {
+    public Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String search, Pageable pageable) {
         List<MemberInfoForAdminResponseDto> memberList = jpaQueryFactory
                 .select(Projections.constructor(MemberInfoForAdminResponseDto.class,
                         member.id,
@@ -30,6 +30,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository{
                         member.isMarketingAgree
                 ))
                 .from(member)
+                .where(marketingAgree != null ? member.isMarketingAgree.eq(marketingAgree) : null)
+                .where(search != null ? member.moldevId.contains(search) : null)
                 .orderBy(member.id.desc())
                 .offset((long) pageable.getPageNumber() * pageable.getPageSize())
                 .limit(pageable.getPageSize())
