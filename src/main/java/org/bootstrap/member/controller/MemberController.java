@@ -8,9 +8,12 @@ import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
+import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.service.MemberService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +84,12 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<?>> getMembersInfo(final @RequestParam List<Long> ids) {
         final List<MemberProfileResponseDto> response = memberService.getMembersProfile(ids);
         return SuccessResponse.ok(response);
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<SuccessResponse<?>> getMembersInfoForAdmin(Pageable pageable) {
+        Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(pageable);
+        return SuccessResponse.ok(membersInfoForAdmin);
     }
 
 }

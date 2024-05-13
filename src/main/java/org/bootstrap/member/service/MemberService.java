@@ -9,6 +9,7 @@ import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
+import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.entity.Ban;
@@ -19,6 +20,8 @@ import org.bootstrap.member.repository.BanRepository;
 import org.bootstrap.member.repository.MemberRepository;
 import org.bootstrap.member.utils.CookieUtils;
 import org.bootstrap.member.utils.RedisUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -104,6 +107,10 @@ public class MemberService {
         LocalDateTime unbanDate = LocalDateTime.now().plusDays(banRequestDto.banDays());
         Ban ban = Ban.of(member, unbanDate, banRequestDto.reasonCode());
         banRepository.save(ban);
+    }
+
+    public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Pageable pageable){
+        return memberRepository.getMemberInfoAdmin(pageable);
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
