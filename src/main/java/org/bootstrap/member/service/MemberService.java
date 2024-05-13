@@ -51,41 +51,46 @@ public class MemberService {
         return MyProfileResponseDto.of(member);
     }
 
-    public MemberProfileResponseDto getMemberProfile(Long memberId){
+    public MemberProfileResponseDto getMemberProfile(Long memberId) {
         Member member = findByIdOrThrow(memberId);
         return MemberProfileResponseDto.of(member);
     }
 
-    public void patchMemberProfile(Long memberId, ProfilePatchRequestDto profilePatchRequestDto){
+    public MemberProfileResponseDto getMemberProfileForMoldevId(String moldevId) {
+        Member member = findByMoldevIdOrThrow(moldevId);
+        return MemberProfileResponseDto.of(member);
+    }
+
+    public void patchMemberProfile(Long memberId, ProfilePatchRequestDto profilePatchRequestDto) {
         Member member = findByIdOrThrow(memberId);
         member.updateProfile(profilePatchRequestDto);
     }
 
-    public void checkPassword(Long memberId, PasswordCheckRequestDto passwordCheckRequestDto){
+    public void checkPassword(Long memberId, PasswordCheckRequestDto passwordCheckRequestDto) {
         Member member = findByIdOrThrow(memberId);
         validatePassword(passwordCheckRequestDto.password(), member.getPassword());
     }
 
-    public void updatePassword(Long memberId, PasswordPatchRequestDto passwordPatchRequestDto){
+    public void updatePassword(Long memberId, PasswordPatchRequestDto passwordPatchRequestDto) {
         Member member = findByIdOrThrow(memberId);
         String encodedPassword = encodePassword(passwordPatchRequestDto.password());
         member.updatePassword(encodedPassword);
     }
 
-    public void updateProfileImage(Long memberId, MultipartFile profileImage){
+    public void updateProfileImage(Long memberId, MultipartFile profileImage) {
         Member member = findByIdOrThrow(memberId);
         String profileImgUrl = checkProfileImageAndGetUrl(profileImage, member.getMoldevId());
         member.updateProfileImage(profileImgUrl);
     }
 
-    public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response){
+    public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response) {
         final String MEMBER_ID = String.valueOf(memberId);
         ValueOperations<String, String> valueOperations = redisUtils.getValueOperations();
 
         Cookie[] cookies = CookieUtils.getCookies(request);
         Cookie cookie = getViewCountCookieFromCookies(cookies);
 
-        if (!cookie.getValue().contains(MEMBER_ID)){
+        if (!cookie.getValue().contains(MEMBER_ID)) {
             valueOperations.increment(MEMBER_ID, 1L);
             cookie.setValue(cookie.getValue() + MEMBER_ID);
         }
@@ -94,7 +99,7 @@ public class MemberService {
         CookieUtils.addCookieWithMaxAge(response, cookie, maxAge);
     }
 
-    public List<MemberProfileResponseDto> getMembersProfile(List<Long> ids){
+    public List<MemberProfileResponseDto> getMembersProfile(List<Long> ids) {
         List<MemberProfileResponseDto> memberByIds = findMemberByIds(ids);
         return memberByIds;
     }
@@ -168,4 +173,8 @@ public class MemberService {
                 .collect(Collectors.toList());
     }
 
+    private Member findByMoldevIdOrThrow(String moldevId) {
+        return memberRepository.findByMoldevId(moldevId)
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
+    }
 }
