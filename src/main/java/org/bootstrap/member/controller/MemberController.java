@@ -14,6 +14,7 @@ import org.bootstrap.member.dto.response.MyProfileResponseDto;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,7 +90,7 @@ public class MemberController {
     @GetMapping("/admin")
     public ResponseEntity<SuccessResponse<?>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
                                                                      @RequestParam(required = false) String search,
-                                                                     Pageable pageable) {
+                                                                     @PageableDefault Pageable pageable) {
         Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, search, pageable);
         return SuccessResponse.ok(membersInfoForAdmin);
     }
