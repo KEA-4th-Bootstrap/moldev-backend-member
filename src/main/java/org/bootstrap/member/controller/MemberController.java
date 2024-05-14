@@ -63,8 +63,8 @@ public class MemberController {
         return SuccessResponse.ok(responseDto);
     }
 
-    @PostMapping("/{memberId}")
-    public ResponseEntity<SuccessResponse<?>> checkMemberPassword(@PathVariable Long memberId,
+    @PostMapping("/view/{memberId}")
+    public ResponseEntity<SuccessResponse<?>> viewCountUp(@PathVariable Long memberId,
                                                                   HttpServletRequest request,
                                                                   HttpServletResponse response){
         memberService.viewCountUpByCookie(memberId, request, response);
