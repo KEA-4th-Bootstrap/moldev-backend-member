@@ -19,7 +19,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String search, Pageable pageable) {
+    public Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable) {
         List<MemberInfoForAdminResponseDto> memberList = jpaQueryFactory
                 .select(Projections.constructor(MemberInfoForAdminResponseDto.class,
                         member.id,
@@ -31,7 +31,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 ))
                 .from(member)
                 .where(marketingAgree != null ? member.isMarketingAgree.eq(marketingAgree) : null)
-                .where(search != null ? member.moldevId.contains(search) : null)
+                .where(searchMoldevId != null ? member.moldevId.contains(searchMoldevId) : null)
                 .orderBy(member.id.desc())
                 .offset((long) pageable.getPageNumber() * pageable.getPageSize())
                 .limit(pageable.getPageSize())

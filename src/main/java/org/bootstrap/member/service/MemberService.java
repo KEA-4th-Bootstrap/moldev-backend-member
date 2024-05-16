@@ -109,8 +109,8 @@ public class MemberService {
         banRepository.save(ban);
     }
 
-    public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Boolean marketingAgree, String search, Pageable pageable){
-        return memberRepository.getMemberInfoForAdmin(marketingAgree, search, pageable);
+    public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable){
+        return memberRepository.getMemberInfoForAdmin(marketingAgree, searchMoldevId, pageable);
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {

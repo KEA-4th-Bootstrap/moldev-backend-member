@@ -89,9 +89,9 @@ public class MemberController {
 
     @GetMapping("/admin")
     public ResponseEntity<SuccessResponse<?>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
-                                                                     @RequestParam(required = false) String search,
+                                                                     @RequestParam(required = false) String searchMoldevId,
                                                                      @PageableDefault Pageable pageable) {
-        Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, search, pageable);
+        Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, searchMoldevId, pageable);
         return SuccessResponse.ok(membersInfoForAdmin);
     }
 

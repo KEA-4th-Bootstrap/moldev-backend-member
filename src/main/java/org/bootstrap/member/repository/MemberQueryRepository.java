@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface MemberQueryRepository {
-    Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String search, Pageable pageable);
+    Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable);
 }
