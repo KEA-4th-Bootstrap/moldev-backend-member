@@ -1,6 +1,7 @@
 package org.bootstrap.member.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
@@ -30,8 +31,10 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                         member.isMarketingAgree
                 ))
                 .from(member)
-                .where(marketingAgree != null ? member.isMarketingAgree.eq(marketingAgree) : null)
-                .where(searchMoldevId != null ? member.moldevId.contains(searchMoldevId) : null)
+                .where(
+                        eqMarketingAgree(marketingAgree),
+                        containsMoldevId(searchMoldevId)
+                )
                 .orderBy(member.id.desc())
                 .offset((long) pageable.getPageNumber() * pageable.getPageSize())
                 .limit(pageable.getPageSize())
@@ -43,5 +46,13 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .fetchFirst();
 
         return PageableExecutionUtils.getPage(memberList, pageable, () -> memberCount);
+    }
+
+    private BooleanExpression eqMarketingAgree(Boolean marketingAgree) {
+        return marketingAgree != null ? member.isMarketingAgree.eq(marketingAgree) : null;
+    }
+
+    private BooleanExpression containsMoldevId(String searchMoldevId) {
+        return searchMoldevId != null ? member.moldevId.contains(searchMoldevId) : null;
     }
 }
