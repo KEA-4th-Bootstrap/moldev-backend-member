@@ -40,6 +40,9 @@ public class Member extends BaseTimeEntity {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Ban ban;
 
+    @Column(name = "marketing_agree")
+    private Boolean isMarketingAgree;
+
     public void updateProfile(ProfilePatchRequestDto profilePatchRequestDto){
         this.islandName = profilePatchRequestDto.islandName();
         this.nickname = profilePatchRequestDto.nickname();
