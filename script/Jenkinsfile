@@ -29,8 +29,8 @@ pipeline {
 
         stage('Docker Login') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-jenkins-token', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'kakao-jenkins-token', passwordVariable: 'PASSWORD_KEY', usernameVariable: 'USER_KEY')]) {
+                    sh "docker login gcu-bootstrap-dev.kr-central-2.kcr.dev --username ${USER_KEY} --password ${PASSWORD_KEY}"
                 }
             }
         }
@@ -41,21 +41,18 @@ pipeline {
                     string(credentialsId: 'docker-hub-name', variable: 'DOCKER_NAME'),
                     string(credentialsId: 'docker-file-member', variable: 'DOCKER_FILE')
                 ]) {
-                    // Docker 이미지에 Jenkins 빌드 번호를 태그로 추가
                     sh "docker build -t ${DOCKER_NAME}/${DOCKER_FILE}:${currentBuild.number} ."
+                    sh "docker tag ${DOCKER_NAME}/${DOCKER_FILE}:${currentBuild.number} gcu-bootstrap-dev.kr-central-2.kcr.dev/moldev-repository/${DOCKER_FILE}:${currentBuild.number}"
                 }
             }
-
         }
 
-        stage('Push Docker Image') {
+       stage('Push Docker Image') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'docker-hub-name', variable: 'DOCKER_NAME'),
                     string(credentialsId: 'docker-file-member', variable: 'DOCKER_FILE')
                 ]) {
-                    // Docker 이미지를 빌드 번호 태그와 함께 푸시
-                    sh "docker push ${DOCKER_NAME}/${DOCKER_FILE}:${currentBuild.number}"
+                    sh "docker push gcu-bootstrap-dev.kr-central-2.kcr.dev/moldev-repository/${DOCKER_FILE}:${currentBuild.number}"
                 }
             }
         }
