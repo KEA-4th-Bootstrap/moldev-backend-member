@@ -26,7 +26,7 @@ public class SchedulerService {
 
     @Scheduled(cron = "0 0 0 * * *")
     public void scheduleViewCount() {
-        Optional.ofNullable(redisUtils.getKeys("*"))
+        Optional.ofNullable(redisUtils.getKeys("[0-9]*"))
                 .ifPresent(this::processKeys);
     }
 
