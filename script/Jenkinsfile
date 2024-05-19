@@ -76,7 +76,7 @@ pipeline {
                 ]) {
                     sh """
                         cd member
-                        sed -i 's/${DOCKER_NAME}\\/${DOCKER_FILE}:.*\$/${DOCKER_NAME}\\/${DOCKER_FILE}:${currentBuild.number}/g' deployment.yaml
+                        sed -i 's|gcu-bootstrap-dev.kr-central-2.kcr.dev/moldev-repository/.*|gcu-bootstrap-dev.kr-central-2.kcr.dev/moldev-repository/${DOCKER_FILE}:${currentBuild.number}|' deployment.yaml
                         git add deployment.yaml
                         git commit -m '[UPDATE] manifest ${currentBuild.number} image versioning'
                     """
