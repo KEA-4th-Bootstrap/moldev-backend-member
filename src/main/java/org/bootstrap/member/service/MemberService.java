@@ -48,6 +48,7 @@ public class MemberService {
     private final S3Service s3Service;
     private final RedisUtils redisUtils;
     public static final String PROFILE_IMAGE_DIRECTORY = "profile";
+    public static final String MEMBER_VIEW_COUNT = "member_view_count";
 
     public MyProfileResponseDto getMyProfile(Long memberId) {
         Member member = findByIdOrThrow(memberId);
@@ -163,9 +164,9 @@ public class MemberService {
 
     private Cookie getViewCountCookieFromCookies(Cookie[] cookies) {
         return Arrays.stream(cookies)
-                .filter(c -> c.getName().equals("viewCount"))
+                .filter(c -> c.getName().equals(MEMBER_VIEW_COUNT))
                 .findFirst()
-                .orElseGet(() -> CookieUtils.createCookie("viewCount", ""));
+                .orElseGet(() -> CookieUtils.createCookie(MEMBER_VIEW_COUNT, ""));
     }
 
     private int getMaxAge() {
