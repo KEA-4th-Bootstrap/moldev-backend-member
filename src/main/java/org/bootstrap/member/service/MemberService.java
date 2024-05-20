@@ -12,6 +12,7 @@ import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
+import org.bootstrap.member.dto.response.TrendingMembersResponseDto;
 import org.bootstrap.member.entity.Ban;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.exception.MemberNotFoundException;
@@ -31,9 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -115,6 +114,25 @@ public class MemberService {
 
     public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable){
         return memberRepository.getMemberInfoForAdmin(marketingAgree, searchMoldevId, pageable);
+    }
+
+    public List<TrendingMembersResponseDto> getTrendingMembersInfo() {
+        Set<Long> trendingMemberIds = redisUtils.getTrendingMemberIds(MEMBER_VIEW_COUNT);
+        List<MemberProfileResponseDto> trendingMembers = memberRepository.getTrendingMembers(trendingMemberIds);
+        return createTrendingMembersWithRedisDto(trendingMembers);
+    }
+
+    private List<TrendingMembersResponseDto> createTrendingMembersWithRedisDto(List<MemberProfileResponseDto> trendingMembers) {
+        return trendingMembers.stream()
+                .map(member -> {
+                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, String.valueOf(member.memberId()));
+                    if (Objects.isNull(viewCount)) {
+                        viewCount = 0.0;
+                    }
+                    return TrendingMembersResponseDto.of(member, viewCount.intValue());
+                })
+                .sorted(Comparator.comparing(TrendingMembersResponseDto::redisViewCount).reversed())
+                .toList();
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
