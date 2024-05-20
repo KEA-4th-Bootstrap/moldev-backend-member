@@ -102,4 +102,10 @@ public class MemberController {
         return SuccessResponse.ok(responseDto);
     }
 
+    @GetMapping("/{moldevId}/profile")
+    public ResponseEntity<SuccessResponse<?>> getMemberProfile(@PathVariable String moldevId) {
+        final MemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId);
+        return SuccessResponse.ok(responseDto);
+    }
+
 }
