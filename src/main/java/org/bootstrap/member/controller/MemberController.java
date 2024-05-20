@@ -16,6 +16,7 @@ import org.bootstrap.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -103,9 +104,9 @@ public class MemberController {
     }
 
     @GetMapping("/{moldevId}/profile")
-    public ResponseEntity<SuccessResponse<?>> getMemberProfile(@PathVariable String moldevId) {
+    public ResponseEntity<MemberProfileResponseDto> getMemberProfile(@PathVariable String moldevId) {
         final MemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId);
-        return SuccessResponse.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
 }
