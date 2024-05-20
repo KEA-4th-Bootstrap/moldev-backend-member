@@ -11,6 +11,7 @@ import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.bootstrap.member.dto.response.MyProfileResponseDto;
+import org.bootstrap.member.dto.response.TrendingMembersResponseDto;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -93,6 +94,12 @@ public class MemberController {
                                                                      @PageableDefault Pageable pageable) {
         Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, searchMoldevId, pageable);
         return SuccessResponse.ok(membersInfoForAdmin);
+    }
+
+    @GetMapping("/trend")
+    public ResponseEntity<SuccessResponse<?>> getTrendingPosts() {
+        final List<TrendingMembersResponseDto> responseDto = memberService.getTrendingMembersInfo();
+        return SuccessResponse.ok(responseDto);
     }
 
 }
