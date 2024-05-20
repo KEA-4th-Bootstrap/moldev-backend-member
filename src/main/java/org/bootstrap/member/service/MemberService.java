@@ -22,7 +22,6 @@ import org.bootstrap.member.utils.CookieUtils;
 import org.bootstrap.member.utils.RedisUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,13 +88,12 @@ public class MemberService {
 
     public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response) {
         final String MEMBER_ID = String.valueOf(memberId);
-        ValueOperations<String, String> valueOperations = redisUtils.getValueOperations();
 
         Cookie[] cookies = CookieUtils.getCookies(request);
         Cookie cookie = getViewCountCookieFromCookies(cookies);
 
         if (!cookie.getValue().contains(MEMBER_ID)) {
-            valueOperations.increment(MEMBER_ID, 1L);
+            redisUtils.getZSetOperations().incrementScore(MEMBER_VIEW_COUNT, MEMBER_ID, 1);
             cookie.setValue(cookie.getValue() + MEMBER_ID);
         }
 
