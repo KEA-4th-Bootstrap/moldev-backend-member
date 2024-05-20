@@ -6,6 +6,7 @@ import org.bootstrap.member.entity.Member;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record MemberProfileResponseDto(
+        Long memberId,
         String profileImgUrl,
         String moldevId,
         String nickname,
@@ -13,6 +14,7 @@ public record MemberProfileResponseDto(
 ) {
     public static MemberProfileResponseDto of (Member member){
         return MemberProfileResponseDto.builder()
+                .memberId(member.getId())
                 .profileImgUrl(member.getProfileImgUrl())
                 .moldevId(member.getMoldevId())
                 .nickname(member.getNickname())
