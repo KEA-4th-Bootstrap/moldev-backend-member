@@ -97,9 +97,9 @@ public class MemberService {
         CookieUtils.addCookieWithMaxAge(response, cookie, maxAge);
     }
 
-    public List<ComposeMemberProfileResponseDto> getMembersProfile(List<Long> ids) {
+    public ComposeProfileResultResponseDto getMembersProfile(List<Long> ids) {
         List<ComposeMemberProfileResponseDto> memberByIds = findMemberByIds(ids);
-        return memberByIds;
+        return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
     public void banMember(BanRequestDto banRequestDto) {

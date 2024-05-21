@@ -34,28 +34,28 @@ public class MemberController {
 
     @PatchMapping("/my")
     public ResponseEntity<SuccessResponse<?>> patchMyProfile(@RequestHeader("Authorization") Long memberId,
-                                                             @RequestBody ProfilePatchRequestDto profilePatchRequestDto){
+                                                             @RequestBody ProfilePatchRequestDto profilePatchRequestDto) {
         memberService.patchMemberProfile(memberId, profilePatchRequestDto);
         return SuccessResponse.ok(null);
     }
 
     @PostMapping("/password")
     public ResponseEntity<SuccessResponse<?>> checkPassword(@RequestHeader("Authorization") Long memberId,
-                                                            @RequestBody PasswordCheckRequestDto passwordCheckRequestDto){
+                                                            @RequestBody PasswordCheckRequestDto passwordCheckRequestDto) {
         memberService.checkPassword(memberId, passwordCheckRequestDto);
         return SuccessResponse.ok(null);
     }
 
     @PatchMapping("/password")
     public ResponseEntity<SuccessResponse<?>> updatePassword(@RequestHeader("Authorization") Long memberId,
-                                                             @RequestBody PasswordPatchRequestDto passwordPatchRequestDto){
+                                                             @RequestBody PasswordPatchRequestDto passwordPatchRequestDto) {
         memberService.updatePassword(memberId, passwordPatchRequestDto);
         return SuccessResponse.ok(null);
     }
 
     @PatchMapping("/profile-image")
     public ResponseEntity<SuccessResponse<?>> updateProfileImage(@RequestHeader("Authorization") Long memberId,
-                                                                 @RequestPart(required = false) MultipartFile profileImage){
+                                                                 @RequestPart(required = false) MultipartFile profileImage) {
         memberService.updateProfileImage(memberId, profileImage);
         return SuccessResponse.ok(null);
     }
@@ -68,21 +68,21 @@ public class MemberController {
 
     @PostMapping("/view/{memberId}")
     public ResponseEntity<SuccessResponse<?>> viewCountUp(@PathVariable Long memberId,
-                                                                  HttpServletRequest request,
-                                                                  HttpServletResponse response){
+                                                          HttpServletRequest request,
+                                                          HttpServletResponse response) {
         memberService.viewCountUpByCookie(memberId, request, response);
         return SuccessResponse.ok(null);
     }
 
     @PostMapping("/ban")
-    public ResponseEntity<SuccessResponse<?>> banMember(@RequestBody BanRequestDto banRequestDto){
+    public ResponseEntity<SuccessResponse<?>> banMember(@RequestBody BanRequestDto banRequestDto) {
         memberService.banMember(banRequestDto);
         return SuccessResponse.ok(null);
     }
 
     @GetMapping("/info")
-    public ResponseEntity<List<ComposeMemberProfileResponseDto>> getMembersInfo(final @RequestParam List<Long> ids) {
-        final List<ComposeMemberProfileResponseDto> response = memberService.getMembersProfile(ids);
+    public ResponseEntity<ComposeProfileResultResponseDto> getMembersInfo(final @RequestParam List<Long> ids) {
+        final ComposeProfileResultResponseDto response = memberService.getMembersProfile(ids);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
