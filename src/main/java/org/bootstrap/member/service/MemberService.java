@@ -198,7 +198,7 @@ public class MemberService {
     }
 
     private Member findByIdOrThrow(Long id) {
-        System.out.println();
+        System.out.println(id);
         return memberRepository.findById(id)
                 .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
