@@ -139,11 +139,6 @@ public class MemberService {
         }
     }
 
-    private Member findByIdOrThrow(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
-    }
-
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
     }
@@ -190,9 +185,21 @@ public class MemberService {
     }
 
     private List<ComposeMemberProfileResponseDto> findMemberByIds(List<Long> ids) {
-        return memberRepository.findAllById(ids).stream()
+        List<Member> members = findMembersById(ids);
+        return members.stream()
                 .map(ComposeMemberProfileResponseDto::of)
                 .collect(Collectors.toList());
+    }
+
+    private List<Member> findMembersById(List<Long> ids) {
+        return ids.stream()
+                .map(this::findByIdOrThrow)
+                .collect(Collectors.toList());
+    }
+
+    private Member findByIdOrThrow(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
 
     private Member findByMoldevIdOrThrow(String moldevId) {
