@@ -99,6 +99,7 @@ public class MemberService {
 
     public ComposeProfileResultResponseDto getMembersProfile(List<Long> ids) {
         List<ComposeMemberProfileResponseDto> memberByIds = findMemberByIds(ids);
+        System.out.println(memberByIds.toString());
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
