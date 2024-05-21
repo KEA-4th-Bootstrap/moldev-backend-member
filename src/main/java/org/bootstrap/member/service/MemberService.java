@@ -82,6 +82,12 @@ public class MemberService {
         member.updateProfileImage(profileImgUrl);
     }
 
+    public MemberSearchResultResponseDto getMemberSearch(String text) {
+        List<MemberProfileResponseDto> memberSearchResults = findMemberSearchResult(text);
+        List<MemberSearchResponseDto> memberSearchResponseDtoList = addTodayViewCountAtSearchResult(memberSearchResults);
+        return MemberSearchResultResponseDto.of(memberSearchResponseDtoList);
+    }
+
     public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response) {
         final String MEMBER_ID = String.valueOf(memberId);
 
@@ -99,7 +105,6 @@ public class MemberService {
 
     public ComposeProfileResultResponseDto getMembersProfile(List<Long> ids) {
         List<ComposeMemberProfileResponseDto> memberByIds = findMemberByIds(ids);
-        System.out.println(memberByIds.toString());
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
@@ -131,6 +136,16 @@ public class MemberService {
                 })
                 .sorted(Comparator.comparing(TrendingMembersResponseDto::redisViewCount).reversed())
                 .toList();
+    }
+
+    private List<MemberSearchResponseDto> addTodayViewCountAtSearchResult(List<MemberProfileResponseDto> responseDtoList) {
+        return responseDtoList.stream()
+                .map(memberProfileResponseDto -> {
+                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, String.valueOf(memberProfileResponseDto.memberId()));
+                    Integer integerViewCount = Objects.isNull(viewCount) ? 0 : viewCount.intValue();
+                    return MemberSearchResponseDto.of(memberProfileResponseDto, integerViewCount);
+                })
+                .collect(Collectors.toList());
     }
 
     private void validatePassword(String inputPassword, String encodedPassword) {
@@ -205,5 +220,9 @@ public class MemberService {
     private Member findByMoldevIdOrThrow(String moldevId) {
         return memberRepository.findByMoldevId(moldevId)
                 .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
+    }
+
+    private List<MemberProfileResponseDto> findMemberSearchResult(String text) {
+        return memberRepository.findMemberSearchResult(text);
     }
 }

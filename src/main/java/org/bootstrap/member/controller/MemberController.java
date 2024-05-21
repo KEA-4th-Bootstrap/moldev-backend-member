@@ -81,7 +81,7 @@ public class MemberController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<ComposeProfileResultResponseDto> getMembersInfo(final @RequestParam List<Long> ids) {
+    public ResponseEntity<ComposeProfileResultResponseDto> getMembersInfo(@RequestParam final List<Long> ids) {
         final ComposeProfileResultResponseDto response = memberService.getMembersProfile(ids);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -106,4 +106,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<SuccessResponse<?>> getMemberSearch(@RequestParam String searchText) {
+        final MemberSearchResultResponseDto responseDto = memberService.getMemberSearch(searchText);
+        return SuccessResponse.ok(responseDto);
+    }
 }

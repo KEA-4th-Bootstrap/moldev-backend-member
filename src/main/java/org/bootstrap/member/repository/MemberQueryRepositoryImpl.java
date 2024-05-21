@@ -6,7 +6,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
-import org.bootstrap.member.dto.response.TrendingMembersResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -64,6 +63,33 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .from(member)
                 .where(inMemberIds(memberIds))
                 .fetch();
+    }
+
+    @Override
+    public List<MemberProfileResponseDto> findMemberSearchResult(String text) {
+        return jpaQueryFactory
+                .select(Projections.constructor(MemberProfileResponseDto.class,
+                        member.id,
+                        member.profileImgUrl,
+                        member.moldevId,
+                        member.nickname,
+                        member.islandName
+                ))
+                .from(member)
+                .where(
+                        containsMoldevId(text)
+                                .or(containsIslandName(text))
+                                .or(containsNickname(text))
+                )
+                .fetch();
+    }
+
+    private BooleanExpression containsIslandName(String text) {
+        return text != null ? member.islandName.contains(text) : null;
+    }
+
+    private BooleanExpression containsNickname(String text) {
+        return text != null ? member.nickname.contains(text) : null;
     }
 
     private BooleanExpression eqMarketingAgree(Boolean marketingAgree) {
