@@ -97,8 +97,8 @@ public class MemberService {
         CookieUtils.addCookieWithMaxAge(response, cookie, maxAge);
     }
 
-    public List<MemberProfileResponseDto> getMembersProfile(List<Long> ids) {
-        List<MemberProfileResponseDto> memberByIds = findMemberByIds(ids);
+    public List<ComposeMemberProfileResponseDto> getMembersProfile(List<Long> ids) {
+        List<ComposeMemberProfileResponseDto> memberByIds = findMemberByIds(ids);
         return memberByIds;
     }
 
@@ -188,9 +188,9 @@ public class MemberService {
         return (int) (todayEndSecond - currentSecond);
     }
 
-    private List<MemberProfileResponseDto> findMemberByIds(List<Long> ids) {
+    private List<ComposeMemberProfileResponseDto> findMemberByIds(List<Long> ids) {
         return memberRepository.findAllById(ids).stream()
-                .map(MemberProfileResponseDto::of)
+                .map(ComposeMemberProfileResponseDto::of)
                 .collect(Collectors.toList());
     }
 

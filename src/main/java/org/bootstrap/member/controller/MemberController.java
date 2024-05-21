@@ -81,9 +81,9 @@ public class MemberController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<SuccessResponse<?>> getMembersInfo(final @RequestParam List<Long> ids) {
-        final List<MemberProfileResponseDto> response = memberService.getMembersProfile(ids);
-        return SuccessResponse.ok(response);
+    public ResponseEntity<List<ComposeMemberProfileResponseDto>> getMembersInfo(final @RequestParam List<Long> ids) {
+        final List<ComposeMemberProfileResponseDto> response = memberService.getMembersProfile(ids);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/admin")
