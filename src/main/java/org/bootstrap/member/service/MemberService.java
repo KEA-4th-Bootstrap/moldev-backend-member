@@ -9,10 +9,7 @@ import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
-import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
-import org.bootstrap.member.dto.response.MemberProfileResponseDto;
-import org.bootstrap.member.dto.response.MyProfileResponseDto;
-import org.bootstrap.member.dto.response.TrendingMembersResponseDto;
+import org.bootstrap.member.dto.response.*;
 import org.bootstrap.member.entity.Ban;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.exception.MemberNotFoundException;
@@ -58,9 +55,9 @@ public class MemberService {
         return MemberProfileResponseDto.of(member);
     }
 
-    public MemberProfileResponseDto getMemberProfileForMoldevId(String moldevId) {
+    public ComposeMemberProfileResponseDto getMemberProfileForMoldevId(String moldevId) {
         Member member = findByMoldevIdOrThrow(moldevId);
-        return MemberProfileResponseDto.of(member);
+        return ComposeMemberProfileResponseDto.of(member);
     }
 
     public void patchMemberProfile(Long memberId, ProfilePatchRequestDto profilePatchRequestDto) {
@@ -112,7 +109,7 @@ public class MemberService {
         banRepository.save(ban);
     }
 
-    public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable){
+    public Page<MemberInfoForAdminResponseDto> getMembersInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable) {
         return memberRepository.getMemberInfoForAdmin(marketingAgree, searchMoldevId, pageable);
     }
 

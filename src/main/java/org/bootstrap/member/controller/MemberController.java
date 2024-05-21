@@ -8,10 +8,7 @@ import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
-import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
-import org.bootstrap.member.dto.response.MemberProfileResponseDto;
-import org.bootstrap.member.dto.response.MyProfileResponseDto;
-import org.bootstrap.member.dto.response.TrendingMembersResponseDto;
+import org.bootstrap.member.dto.response.*;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,8 +101,8 @@ public class MemberController {
     }
 
     @GetMapping("/{moldevId}/profile")
-    public ResponseEntity<MemberProfileResponseDto> getMemberProfile(@PathVariable String moldevId) {
-        final MemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId);
+    public ResponseEntity<ComposeMemberProfileResponseDto> getMemberProfile(@PathVariable String moldevId) {
+        final ComposeMemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
