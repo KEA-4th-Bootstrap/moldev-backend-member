@@ -125,6 +125,12 @@ public class MemberService {
         return createTrendingMembersWithRedisDto(trendingMembers);
     }
 
+    public RecommendMemberProfileResponseDto getMemberRecommend(List<Long> memberIds) {
+        List<MemberProfileResponseDto> searchList = findMemberProfileResponseDtoByIds(memberIds);
+        List<MemberSearchResponseDto> memberSearchResponseDtoList = addTodayViewCountAtSearchResult(searchList);
+        return RecommendMemberProfileResponseDto.of(memberSearchResponseDtoList);
+    }
+
     private List<TrendingMembersResponseDto> createTrendingMembersWithRedisDto(List<MemberProfileResponseDto> trendingMembers) {
         return trendingMembers.stream()
                 .map(member -> {
@@ -203,6 +209,13 @@ public class MemberService {
         List<Member> members = findMembersById(ids);
         return members.stream()
                 .map(ComposeMemberProfileResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    private List<MemberProfileResponseDto> findMemberProfileResponseDtoByIds(List<Long> ids) {
+        List<Member> members = findMembersById(ids);
+        return members.stream()
+                .map(MemberProfileResponseDto::of)
                 .collect(Collectors.toList());
     }
 

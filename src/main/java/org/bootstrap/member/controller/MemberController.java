@@ -111,4 +111,10 @@ public class MemberController {
         final MemberSearchResultResponseDto responseDto = memberService.getMemberSearch(searchText);
         return SuccessResponse.ok(responseDto);
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<RecommendMemberProfileResponseDto> getMemberRecommend(@RequestParam List<Long> memberIds) {
+        final RecommendMemberProfileResponseDto responseDto = memberService.getMemberRecommend(memberIds);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
 }
