@@ -8,6 +8,8 @@ import org.bootstrap.member.dto.response.MemberInfoForAdminResponseDto;
 import org.bootstrap.member.dto.response.MemberProfileResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
@@ -66,8 +68,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     }
 
     @Override
-    public List<MemberProfileResponseDto> findMemberSearchResult(String text) {
-        return jpaQueryFactory
+    public Slice<MemberProfileResponseDto> findMemberSearchResult(String text, Pageable pageable) {
+        List<MemberProfileResponseDto> contents=  jpaQueryFactory
                 .select(Projections.constructor(MemberProfileResponseDto.class,
                         member.id,
                         member.profileImgUrl,
@@ -81,7 +83,12 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                                 .or(containsIslandName(text))
                                 .or(containsNickname(text))
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(member.id.desc())
                 .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
 
     private BooleanExpression containsIslandName(String text) {
@@ -102,5 +109,12 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
     private BooleanExpression inMemberIds(Set<Long> memberIds) {
         return memberIds != null ? member.id.in(memberIds) : null;
+    }
+    private boolean hasNextPage(List<MemberProfileResponseDto> postList, int pageSize) {
+        if (postList.size() > pageSize) {
+            postList.remove(pageSize);
+            return true;
+        }
+        return false;
     }
 }

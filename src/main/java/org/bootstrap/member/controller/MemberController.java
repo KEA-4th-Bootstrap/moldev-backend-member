@@ -105,8 +105,9 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<MemberSearchResultResponseDto> getMemberSearch(@RequestParam String searchText) {
-        final MemberSearchResultResponseDto responseDto = memberService.getMemberSearch(searchText);
+    public ResponseEntity<MemberSearchResultResponseDto> getMemberSearch(@RequestParam String searchText,
+                                                                         final Pageable pageable) {
+        final MemberSearchResultResponseDto responseDto = memberService.getMemberSearch(searchText, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
