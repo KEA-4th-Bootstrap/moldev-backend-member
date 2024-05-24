@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.aws.S3Service;
+import org.bootstrap.member.common.PageInfo;
 import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
@@ -20,6 +21,7 @@ import org.bootstrap.member.utils.CookieUtils;
 import org.bootstrap.member.utils.RedisUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,10 +84,10 @@ public class MemberService {
         member.updateProfileImage(profileImgUrl);
     }
 
-    public MemberSearchResultResponseDto getMemberSearch(String text) {
-        List<MemberProfileResponseDto> memberSearchResults = findMemberSearchResult(text);
-        List<MemberSearchResponseDto> memberSearchResponseDtoList = addTodayViewCountAtSearchResult(memberSearchResults);
-        return MemberSearchResultResponseDto.of(memberSearchResponseDtoList);
+    public MemberSearchResultResponseDto getMemberSearch(String text, Pageable pageable) {
+        Slice<MemberProfileResponseDto> memberSearchResults = findMemberSearchResult(text, pageable);
+        List<MemberSearchResponseDto> memberSearchResponseDtoList = addTodayViewCountAtSearchResult(memberSearchResults.getContent());
+        return MemberSearchResultResponseDto.of(memberSearchResponseDtoList, PageInfo.of(memberSearchResults));
     }
 
     public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response) {
@@ -240,7 +242,7 @@ public class MemberService {
                 .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
 
-    private List<MemberProfileResponseDto> findMemberSearchResult(String text) {
-        return memberRepository.findMemberSearchResult(text);
+    private Slice<MemberProfileResponseDto> findMemberSearchResult(String text, Pageable pageable) {
+        return memberRepository.findMemberSearchResult(text, pageable);
     }
 }
