@@ -90,15 +90,15 @@ public class MemberService {
         return MemberSearchResultResponseDto.of(memberSearchResponseDtoList, PageInfo.of(memberSearchResults));
     }
 
-    public void viewCountUpByCookie(Long memberId, HttpServletRequest request, HttpServletResponse response) {
-        final String MEMBER_ID = String.valueOf(memberId);
+    public void viewCountUpByCookie(String moldevId, HttpServletRequest request, HttpServletResponse response) {
+//        final String MEMBER_ID = String.valueOf(memberId);
 
         Cookie[] cookies = CookieUtils.getCookies(request);
         Cookie cookie = getViewCountCookieFromCookies(cookies);
 
-        if (!cookie.getValue().contains(MEMBER_ID)) {
-            redisUtils.getZSetOperations().incrementScore(MEMBER_VIEW_COUNT, MEMBER_ID, 1);
-            cookie.setValue(cookie.getValue() + MEMBER_ID);
+        if (!cookie.getValue().contains(moldevId)) {
+            redisUtils.getZSetOperations().incrementScore(MEMBER_VIEW_COUNT, moldevId, 1);
+            cookie.setValue(cookie.getValue() + moldevId);
         }
 
         int maxAge = getMaxAge();

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.bootstrap.member.entity.Member;
 import org.bootstrap.member.repository.MemberRepository;
 import org.bootstrap.member.utils.RedisUtils;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,31 +30,22 @@ public class SchedulerService {
     }
 
     private void processKeys(Set<String> viewCountKeys) {
-        List<Long> keys = getKeyList(viewCountKeys);
-        List<Member> members = getExistMembersByKeys(keys);
-
+        List<Member> members = getExistMembersByKeys(viewCountKeys);
         members.forEach(this::updateMemberViewCount);
     }
 
     private void updateMemberViewCount(Member member) {
-        String key = String.valueOf(member.getId());
-        ZSetOperations<String, String> zSetOperations = redisUtils.getZSetOperations();
-        Double viewCount = Objects.requireNonNull(zSetOperations.score(MEMBER_VIEW_COUNT, key));
+        String moldevId = member.getMoldevId();
+        Double viewCount = Objects.requireNonNull(redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, moldevId));
         member.updateViewCount(member.getViewCount() + viewCount.intValue());
-        zSetOperations.remove(MEMBER_VIEW_COUNT, key);
+        redisUtils.getZSetOperations().remove(MEMBER_VIEW_COUNT, moldevId);
     }
 
-    private List<Member> getExistMembersByKeys(List<Long> keys) {
+    private List<Member> getExistMembersByKeys(Set<String> keys) {
         return keys.stream()
-                .map(memberRepository::findById)
+                .map(memberRepository::findByMoldevId)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
-    }
-
-    private List<Long> getKeyList(Set<String> keys) {
-        return keys.stream()
-                .map(Long::parseLong)
                 .collect(Collectors.toList());
     }
 }

@@ -64,11 +64,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
-    @PostMapping("/view/{memberId}")
-    public ResponseEntity<Void> viewCountUp(@PathVariable Long memberId,
+    @PostMapping("/view/{moldevId}")
+    public ResponseEntity<Void> viewCountUp(@PathVariable String moldevId,
                                                           HttpServletRequest request,
                                                           HttpServletResponse response) {
-        memberService.viewCountUpByCookie(memberId, request, response);
+        memberService.viewCountUpByCookie(moldevId, request, response);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
