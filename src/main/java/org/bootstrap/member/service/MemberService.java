@@ -119,10 +119,10 @@ public class MemberService {
         return memberRepository.getMemberInfoForAdmin(marketingAgree, searchMoldevId, pageable);
     }
 
-    public List<TrendingMembersResponseDto> getTrendingMembersInfo() {
+    public TrendingMembersListResponseDto getTrendingMembersInfo() {
         Set<Long> trendingMemberIds = redisUtils.getTrendingMemberIds(MEMBER_VIEW_COUNT);
         List<MemberProfileResponseDto> trendingMembers = memberRepository.getTrendingMembers(trendingMemberIds);
-        return createTrendingMembersWithRedisDto(trendingMembers);
+        return TrendingMembersListResponseDto.of(createTrendingMembersWithRedisDto(trendingMembers));
     }
 
     public RecommendMemberProfileResponseDto getMemberRecommend(List<Long> memberIds) {
