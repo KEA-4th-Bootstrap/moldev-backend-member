@@ -3,7 +3,6 @@ package org.bootstrap.member.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.bootstrap.member.common.SuccessResponse;
 import org.bootstrap.member.dto.request.BanRequestDto;
 import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
@@ -27,56 +26,56 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/my")
-    public ResponseEntity<SuccessResponse<?>> getMyProfile(@RequestHeader("Authorization") Long memberId) {
+    public ResponseEntity<MyProfileResponseDto> getMyProfile(@RequestHeader("Authorization") Long memberId) {
         final MyProfileResponseDto responseDto = memberService.getMyProfile(memberId);
-        return SuccessResponse.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PatchMapping("/my")
-    public ResponseEntity<SuccessResponse<?>> patchMyProfile(@RequestHeader("Authorization") Long memberId,
+    public ResponseEntity<Void> patchMyProfile(@RequestHeader("Authorization") Long memberId,
                                                              @RequestBody ProfilePatchRequestDto profilePatchRequestDto) {
         memberService.patchMemberProfile(memberId, profilePatchRequestDto);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/password")
-    public ResponseEntity<SuccessResponse<?>> checkPassword(@RequestHeader("Authorization") Long memberId,
-                                                            @RequestBody PasswordCheckRequestDto passwordCheckRequestDto) {
+    public ResponseEntity<Void> checkPassword(@RequestHeader("Authorization") Long memberId,
+                                              @RequestBody PasswordCheckRequestDto passwordCheckRequestDto) {
         memberService.checkPassword(memberId, passwordCheckRequestDto);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<SuccessResponse<?>> updatePassword(@RequestBody PasswordPatchRequestDto passwordPatchRequestDto) {
+    public ResponseEntity<Void> updatePassword(@RequestBody PasswordPatchRequestDto passwordPatchRequestDto) {
         memberService.updatePassword(passwordPatchRequestDto);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/profile-image")
-    public ResponseEntity<SuccessResponse<?>> updateProfileImage(@RequestHeader("Authorization") Long memberId,
+    public ResponseEntity<Void> updateProfileImage(@RequestHeader("Authorization") Long memberId,
                                                                  @RequestPart(required = false) MultipartFile profileImage) {
         memberService.updateProfileImage(memberId, profileImage);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<SuccessResponse<?>> getMemberProfile(@PathVariable Long memberId) {
+    public ResponseEntity<MemberProfileResponseDto> getMemberProfile(@PathVariable Long memberId) {
         final MemberProfileResponseDto responseDto = memberService.getMemberProfile(memberId);
-        return SuccessResponse.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @PostMapping("/view/{memberId}")
-    public ResponseEntity<SuccessResponse<?>> viewCountUp(@PathVariable Long memberId,
+    public ResponseEntity<Void> viewCountUp(@PathVariable Long memberId,
                                                           HttpServletRequest request,
                                                           HttpServletResponse response) {
         memberService.viewCountUpByCookie(memberId, request, response);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/ban")
-    public ResponseEntity<SuccessResponse<?>> banMember(@RequestBody BanRequestDto banRequestDto) {
+    public ResponseEntity<Void> banMember(@RequestBody BanRequestDto banRequestDto) {
         memberService.banMember(banRequestDto);
-        return SuccessResponse.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/info")
@@ -86,17 +85,17 @@ public class MemberController {
     }
 
     @GetMapping("/admin")
-    public ResponseEntity<SuccessResponse<?>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
+    public ResponseEntity<Page<MemberInfoForAdminResponseDto>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
                                                                      @RequestParam(required = false) String searchMoldevId,
                                                                      @PageableDefault Pageable pageable) {
         Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, searchMoldevId, pageable);
-        return SuccessResponse.ok(membersInfoForAdmin);
+        return ResponseEntity.status(HttpStatus.OK).body(membersInfoForAdmin);
     }
 
     @GetMapping("/trend")
-    public ResponseEntity<SuccessResponse<?>> getTrendingPosts() {
+    public ResponseEntity<List<TrendingMembersResponseDto>> getTrendingPosts() {
         final List<TrendingMembersResponseDto> responseDto = memberService.getTrendingMembersInfo();
-        return SuccessResponse.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/{moldevId}/profile")
@@ -106,9 +105,9 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SuccessResponse<?>> getMemberSearch(@RequestParam String searchText) {
+    public ResponseEntity<MemberSearchResultResponseDto> getMemberSearch(@RequestParam String searchText) {
         final MemberSearchResultResponseDto responseDto = memberService.getMemberSearch(searchText);
-        return SuccessResponse.ok(responseDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     @GetMapping("/recommend")
