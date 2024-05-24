@@ -70,8 +70,8 @@ public class MemberService {
         validatePassword(passwordCheckRequestDto.password(), member.getPassword());
     }
 
-    public void updatePassword(Long memberId, PasswordPatchRequestDto passwordPatchRequestDto) {
-        Member member = findByIdOrThrow(memberId);
+    public void updatePassword(PasswordPatchRequestDto passwordPatchRequestDto) {
+        Member member = findByEmailOrThrow(passwordPatchRequestDto.email());
         String encodedPassword = encodePassword(passwordPatchRequestDto.password());
         member.updatePassword(encodedPassword);
     }
@@ -227,6 +227,11 @@ public class MemberService {
 
     private Member findByIdOrThrow(Long id) {
         return memberRepository.findById(id)
+                .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
+    }
+
+    private Member findByEmailOrThrow(String email){
+        return memberRepository.findByEmail(email)
                 .orElseThrow(() -> MemberNotFoundException.EXCEPTION);
     }
 
