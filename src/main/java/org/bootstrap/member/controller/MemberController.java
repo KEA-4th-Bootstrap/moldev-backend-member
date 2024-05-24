@@ -93,8 +93,8 @@ public class MemberController {
     }
 
     @GetMapping("/trend")
-    public ResponseEntity<List<TrendingMembersResponseDto>> getTrendingPosts() {
-        final List<TrendingMembersResponseDto> responseDto = memberService.getTrendingMembersInfo();
+    public ResponseEntity<TrendingMembersListResponseDto> getTrendingPosts() {
+        final TrendingMembersListResponseDto responseDto = memberService.getTrendingMembersInfo();
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
