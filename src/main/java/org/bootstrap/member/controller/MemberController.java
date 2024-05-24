@@ -47,9 +47,8 @@ public class MemberController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<SuccessResponse<?>> updatePassword(@RequestHeader("Authorization") Long memberId,
-                                                             @RequestBody PasswordPatchRequestDto passwordPatchRequestDto) {
-        memberService.updatePassword(memberId, passwordPatchRequestDto);
+    public ResponseEntity<SuccessResponse<?>> updatePassword(@RequestBody PasswordPatchRequestDto passwordPatchRequestDto) {
+        memberService.updatePassword(passwordPatchRequestDto);
         return SuccessResponse.ok(null);
     }
 
