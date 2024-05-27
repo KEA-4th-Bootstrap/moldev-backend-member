@@ -11,6 +11,6 @@ import java.util.Set;
 
 public interface MemberQueryRepository {
     Page<MemberInfoForAdminResponseDto> getMemberInfoForAdmin(Boolean marketingAgree, String searchMoldevId, Pageable pageable);
-    List<MemberProfileResponseDto> getTrendingMembers(Set<Long> memberIds);
+    List<MemberProfileResponseDto> getTrendingMembers(Set<String> moldevIds);
     Slice<MemberProfileResponseDto> findMemberSearchResult(String text, Pageable pageable);
 }

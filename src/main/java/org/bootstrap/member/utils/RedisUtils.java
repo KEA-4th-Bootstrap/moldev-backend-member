@@ -27,10 +27,7 @@ public class RedisUtils {
         return redisTemplate.opsForZSet();
     }
 
-    public Set<Long> getTrendingMemberIds(String key) {
-        Set<String> stringSet = getZSetOperations().reverseRange(key, 0, 17);
-        return stringSet.stream()
-                .map(Long::parseLong)
-                .collect(Collectors.toSet());
+    public Set<String> getTrendingMoldevIds(String key) {
+        return getZSetOperations().reverseRange(key, 0, 17);
     }
 }

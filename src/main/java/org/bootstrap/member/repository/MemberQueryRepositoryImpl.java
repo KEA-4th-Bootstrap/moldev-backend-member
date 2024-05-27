@@ -53,17 +53,16 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     }
 
     @Override
-    public List<MemberProfileResponseDto> getTrendingMembers(Set<Long> memberIds) {
+    public List<MemberProfileResponseDto> getTrendingMembers(Set<String> moldevIds) {
         return jpaQueryFactory
                 .select(Projections.constructor(MemberProfileResponseDto.class,
-                        member.id,
                         member.profileImgUrl,
                         member.moldevId,
                         member.nickname,
                         member.islandName
                 ))
                 .from(member)
-                .where(inMemberIds(memberIds))
+                .where(inMoldevIds(moldevIds))
                 .fetch();
     }
 
@@ -71,7 +70,6 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     public Slice<MemberProfileResponseDto> findMemberSearchResult(String text, Pageable pageable) {
         List<MemberProfileResponseDto> contents=  jpaQueryFactory
                 .select(Projections.constructor(MemberProfileResponseDto.class,
-                        member.id,
                         member.profileImgUrl,
                         member.moldevId,
                         member.nickname,
@@ -107,8 +105,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
         return searchMoldevId != null ? member.moldevId.contains(searchMoldevId) : null;
     }
 
-    private BooleanExpression inMemberIds(Set<Long> memberIds) {
-        return memberIds != null ? member.id.in(memberIds) : null;
+    private BooleanExpression inMoldevIds(Set<String> moldevIds) {
+        return moldevIds != null ? member.moldevId.in(moldevIds) : null;
     }
     private boolean hasNextPage(List<MemberProfileResponseDto> postList, int pageSize) {
         if (postList.size() > pageSize) {

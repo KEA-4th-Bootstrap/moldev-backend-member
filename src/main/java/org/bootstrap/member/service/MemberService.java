@@ -125,7 +125,7 @@ public class MemberService {
     }
 
     public TrendingMembersListResponseDto getTrendingMembersInfo() {
-        Set<Long> trendingMemberIds = redisUtils.getTrendingMemberIds(MEMBER_VIEW_COUNT);
+        Set<String> trendingMemberIds = redisUtils.getTrendingMoldevIds(MEMBER_VIEW_COUNT);
         List<MemberProfileResponseDto> trendingMembers = memberRepository.getTrendingMembers(trendingMemberIds);
         return TrendingMembersListResponseDto.of(createTrendingMembersWithRedisDto(trendingMembers));
     }
@@ -139,7 +139,7 @@ public class MemberService {
     private List<TrendingMembersResponseDto> createTrendingMembersWithRedisDto(List<MemberProfileResponseDto> trendingMembers) {
         return trendingMembers.stream()
                 .map(member -> {
-                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, String.valueOf(member.memberId()));
+                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, member.moldevId());
                     if (Objects.isNull(viewCount)) {
                         viewCount = 0.0;
                     }
@@ -152,7 +152,7 @@ public class MemberService {
     private List<MemberSearchResponseDto> addTodayViewCountAtSearchResult(List<MemberProfileResponseDto> responseDtoList) {
         return responseDtoList.stream()
                 .map(memberProfileResponseDto -> {
-                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, String.valueOf(memberProfileResponseDto.memberId()));
+                    Double viewCount = redisUtils.getZSetOperations().score(MEMBER_VIEW_COUNT, memberProfileResponseDto.moldevId());
                     Integer integerViewCount = Objects.isNull(viewCount) ? 0 : viewCount.intValue();
                     return MemberSearchResponseDto.of(memberProfileResponseDto, integerViewCount);
                 })
