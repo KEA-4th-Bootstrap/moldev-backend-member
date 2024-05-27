@@ -33,7 +33,7 @@ public class MemberController {
 
     @PatchMapping("/my")
     public ResponseEntity<Void> patchMyProfile(@RequestHeader("Authorization") Long memberId,
-                                                             @RequestBody ProfilePatchRequestDto profilePatchRequestDto) {
+                                               @RequestBody ProfilePatchRequestDto profilePatchRequestDto) {
         memberService.patchMemberProfile(memberId, profilePatchRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -53,7 +53,7 @@ public class MemberController {
 
     @PatchMapping("/profile-image")
     public ResponseEntity<Void> updateProfileImage(@RequestHeader("Authorization") Long memberId,
-                                                                 @RequestPart(required = false) MultipartFile profileImage) {
+                                                   @RequestPart(required = false) MultipartFile profileImage) {
         memberService.updateProfileImage(memberId, profileImage);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -66,8 +66,8 @@ public class MemberController {
 
     @PostMapping("/view/{moldevId}")
     public ResponseEntity<Void> viewCountUp(@PathVariable String moldevId,
-                                                          HttpServletRequest request,
-                                                          HttpServletResponse response) {
+                                            HttpServletRequest request,
+                                            HttpServletResponse response) {
         memberService.viewCountUpByCookie(moldevId, request, response);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -86,8 +86,8 @@ public class MemberController {
 
     @GetMapping("/admin")
     public ResponseEntity<Page<MemberInfoForAdminResponseDto>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
-                                                                     @RequestParam(required = false) String searchMoldevId,
-                                                                     @PageableDefault Pageable pageable) {
+                                                                                      @RequestParam(required = false) String searchMoldevId,
+                                                                                      @PageableDefault Pageable pageable) {
         Page<MemberInfoForAdminResponseDto> membersInfoForAdmin = memberService.getMembersInfoForAdmin(marketingAgree, searchMoldevId, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(membersInfoForAdmin);
     }
@@ -99,8 +99,10 @@ public class MemberController {
     }
 
     @GetMapping("/{moldevId}/profile")
-    public ResponseEntity<ComposeMemberProfileResponseDto> getMemberProfile(@PathVariable String moldevId) {
-        final ComposeMemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId);
+    public ResponseEntity<ComposeMemberProfileResponseDto> getMemberProfile(@PathVariable String moldevId,
+                                                                            HttpServletRequest request,
+                                                                            HttpServletResponse response) {
+        final ComposeMemberProfileResponseDto responseDto = memberService.getMemberProfileForMoldevId(moldevId, request, response);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 

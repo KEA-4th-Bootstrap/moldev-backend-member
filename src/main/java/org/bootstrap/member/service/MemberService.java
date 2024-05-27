@@ -57,8 +57,11 @@ public class MemberService {
         return MemberProfileResponseDto.of(member);
     }
 
-    public ComposeMemberProfileResponseDto getMemberProfileForMoldevId(String moldevId) {
+    public ComposeMemberProfileResponseDto getMemberProfileForMoldevId(String moldevId,
+                                                                       HttpServletRequest request,
+                                                                       HttpServletResponse response) {
         Member member = findByMoldevIdOrThrow(moldevId);
+        viewCountUpByCookie(moldevId, request, response);
         return ComposeMemberProfileResponseDto.of(member);
     }
 
