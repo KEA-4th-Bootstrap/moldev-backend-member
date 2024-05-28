@@ -30,11 +30,11 @@ public class Ban {
     @Column(nullable = false)
     private ReasonType reason;
 
-    public static Ban of(Member member, LocalDateTime unbanDate, Integer reasonCode) {
+    public static Ban of(Member member, LocalDateTime unbanDate, ReasonType reason) {
         return Ban.builder()
                 .member(member)
                 .unbanDate(unbanDate)
-                .reason(EnumValueUtils.toEntityCode(ReasonType.class, reasonCode))
+                .reason(reason)
                 .build();
     }
 }
