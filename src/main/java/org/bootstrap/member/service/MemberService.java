@@ -113,6 +113,11 @@ public class MemberService {
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
+    public ComposeProfileResultResponseDto getMembersProfileByMoldevId(List<String> ids) {
+        List<ComposeMemberProfileResponseDto> memberByIds = findMemberByMoldevIds(ids);
+        return ComposeProfileResultResponseDto.of(memberByIds);
+    }
+
     public void banMember(BanRequestDto banRequestDto) {
         Member member = findByIdOrThrow(banRequestDto.memberId());
         LocalDateTime unbanDate = LocalDateTime.now().plusDays(banRequestDto.banDays());
@@ -217,6 +222,13 @@ public class MemberService {
                 .collect(Collectors.toList());
     }
 
+    private List<ComposeMemberProfileResponseDto> findMemberByMoldevIds(List<String> ids) {
+        List<Member> members = findMembersByMoldevId(ids);
+        return members.stream()
+                .map(ComposeMemberProfileResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
     private List<MemberProfileResponseDto> findMemberProfileResponseDtoByIds(List<Long> ids) {
         List<Member> members = findMembersById(ids);
         return members.stream()
@@ -227,6 +239,12 @@ public class MemberService {
     private List<Member> findMembersById(List<Long> ids) {
         return ids.stream()
                 .map(this::findByIdOrThrow)
+                .collect(Collectors.toList());
+    }
+
+    private List<Member> findMembersByMoldevId(List<String> ids) {
+        return ids.stream()
+                .map(this::findByMoldevIdOrThrow)
                 .collect(Collectors.toList());
     }
 

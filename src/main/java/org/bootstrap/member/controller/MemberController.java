@@ -84,6 +84,12 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/moldev_info")
+    public ResponseEntity<ComposeProfileResultResponseDto> getMembersInfoByMoldevId(@RequestParam final List<String> ids) {
+        final ComposeProfileResultResponseDto response = memberService.getMembersProfileByMoldevId(ids);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/admin")
     public ResponseEntity<Page<MemberInfoForAdminResponseDto>> getMembersInfoForAdmin(@RequestParam(required = false) Boolean marketingAgree,
                                                                                       @RequestParam(required = false) String searchMoldevId,
