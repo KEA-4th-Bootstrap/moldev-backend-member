@@ -114,7 +114,7 @@ public class MemberService {
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
-    // @Cacheable(value = "trendPostUser", key = "T(String).join(',', #ids)")
+    @Cacheable(value = "trendPostUser", key = "T(String).join(',', #ids)")
     public ComposeProfileResultResponseDto getMembersProfileByMoldevId(List<String> ids) {
         List<ComposeMemberProfileResponseDto> memberByIds = findMemberByMoldevIds(ids);
         return ComposeProfileResultResponseDto.of(memberByIds);
