@@ -19,6 +19,7 @@ import org.bootstrap.member.repository.BanRepository;
 import org.bootstrap.member.repository.MemberRepository;
 import org.bootstrap.member.utils.CookieUtils;
 import org.bootstrap.member.utils.RedisUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -113,6 +114,7 @@ public class MemberService {
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
+    @Cacheable(value = "trendPostUser", key = "T(String).join(',', #ids)")
     public ComposeProfileResultResponseDto getMembersProfileByMoldevId(List<String> ids) {
         List<ComposeMemberProfileResponseDto> memberByIds = findMemberByMoldevIds(ids);
         return ComposeProfileResultResponseDto.of(memberByIds);
