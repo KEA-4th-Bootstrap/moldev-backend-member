@@ -131,6 +131,7 @@ public class MemberService {
         return memberRepository.getMemberInfoForAdmin(marketingAgree, searchMoldevId, pageable);
     }
 
+    @Cacheable(value = "trendUser", key = "'Trend'")
     public TrendingMembersListResponseDto getTrendingMembersInfo() {
         Set<String> trendingMemberIds = redisUtils.getTrendingMoldevIds(MEMBER_VIEW_COUNT);
         List<MemberProfileResponseDto> trendingMembers = memberRepository.getTrendingMembers(trendingMemberIds);

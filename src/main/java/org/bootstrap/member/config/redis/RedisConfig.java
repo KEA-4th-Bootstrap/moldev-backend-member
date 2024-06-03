@@ -55,6 +55,7 @@ public class RedisConfig {
 
         Map<String, RedisCacheConfiguration> configurations = new HashMap<>();
         configurations.put("trendPostUser", defaultConfig.entryTtl(Duration.ofSeconds(298)));
+        configurations.put("trendUser", defaultConfig.entryTtl(Duration.ofMinutes(5)));
 
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory())  // RedisCacheManager 가 사용할 RedisConnectionFactory 객체 설정
