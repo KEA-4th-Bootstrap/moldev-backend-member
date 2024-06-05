@@ -126,8 +126,8 @@ public class MemberController {
     }
 
     @DeleteMapping("/{moldevId}")
-    public ResponseEntity<Void> deleteMember(@PathVariable String moldevId) {
+    public ResponseEntity<?> deleteMember(@PathVariable String moldevId) {
         memberService.deleteMember(moldevId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
