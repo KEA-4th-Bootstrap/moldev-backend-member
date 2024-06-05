@@ -120,10 +120,10 @@ public class MemberService {
         return ComposeProfileResultResponseDto.of(memberByIds);
     }
 
-    public void banMember(BanRequestDto banRequestDto) {
+    public void banMember(Long reportId, BanRequestDto banRequestDto) {
         Member member = findByMoldevIdOrThrow(banRequestDto.moldevId());
         LocalDateTime unbanDate = LocalDateTime.now().plusDays(banRequestDto.banDays());
-        Ban ban = Ban.of(member, banRequestDto.reportId(), unbanDate, banRequestDto.reason());
+        Ban ban = Ban.of(member, reportId, unbanDate, banRequestDto.reason());
         banRepository.save(ban);
     }
 

@@ -72,9 +72,10 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/ban")
-    public ResponseEntity<Void> banMember(@RequestBody BanRequestDto banRequestDto) {
-        memberService.banMember(banRequestDto);
+    @PostMapping("/ban/{reportId}")
+    public ResponseEntity<Void> banMember(@PathVariable Long reportId,
+                                          @RequestBody BanRequestDto banRequestDto) {
+        memberService.banMember(reportId, banRequestDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
