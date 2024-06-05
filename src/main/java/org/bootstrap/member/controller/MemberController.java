@@ -124,4 +124,10 @@ public class MemberController {
         final RecommendMemberProfileResponseDto responseDto = memberService.getMemberRecommend(memberIds);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
+
+    @DeleteMapping("/{moldevId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable String moldevId) {
+        memberService.deleteMember(moldevId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

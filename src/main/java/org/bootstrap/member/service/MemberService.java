@@ -144,6 +144,11 @@ public class MemberService {
         return RecommendMemberProfileResponseDto.of(memberSearchResponseDtoList);
     }
 
+    public void deleteMember(String moldevId) {
+        Member member = findByMoldevIdOrThrow(moldevId);
+        memberRepository.delete(member);
+    }
+
     private List<TrendingMembersResponseDto> createTrendingMembersWithRedisDto(List<MemberProfileResponseDto> trendingMembers) {
         return trendingMembers.stream()
                 .map(member -> {
