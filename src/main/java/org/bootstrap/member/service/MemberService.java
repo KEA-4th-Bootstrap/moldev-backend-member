@@ -121,9 +121,9 @@ public class MemberService {
     }
 
     public void banMember(BanRequestDto banRequestDto) {
-        Member member = findByIdOrThrow(banRequestDto.memberId());
+        Member member = findByMoldevIdOrThrow(banRequestDto.moldevId());
         LocalDateTime unbanDate = LocalDateTime.now().plusDays(banRequestDto.banDays());
-        Ban ban = Ban.of(member, unbanDate, banRequestDto.reason());
+        Ban ban = Ban.of(member, banRequestDto.reportId(), unbanDate, banRequestDto.reason());
         banRepository.save(ban);
     }
 

@@ -7,6 +7,8 @@ import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
@@ -37,8 +39,8 @@ public class Member extends BaseTimeEntity {
     @Column(name = "view_count")
     private Integer viewCount;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
-    private Ban ban;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Ban> ban;
 
     @Column(name = "marketing_agree")
     private Boolean isMarketingAgree;
