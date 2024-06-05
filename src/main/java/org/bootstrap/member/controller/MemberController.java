@@ -8,6 +8,7 @@ import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
 import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
 import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
 import org.bootstrap.member.dto.response.*;
+import org.bootstrap.member.service.BanService;
 import org.bootstrap.member.service.MemberService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 public class MemberController {
     private final MemberService memberService;
+    private final BanService banService;
 
     @GetMapping("/my")
     public ResponseEntity<MyProfileResponseDto> getMyProfile(@RequestHeader("Authorization") Long memberId) {
@@ -130,5 +132,11 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(@PathVariable String moldevId) {
         memberService.deleteMember(moldevId);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/banInfoOfReport/{reportId}")
+    public ResponseEntity<BanInfoResponseDto> getBanInfoByReport(@PathVariable Long reportId) {
+        final BanInfoResponseDto responseDto = banService.getBanInfoOfReport(reportId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
