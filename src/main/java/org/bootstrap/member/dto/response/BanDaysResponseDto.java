@@ -4,11 +4,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record BanInfoResponseDto(
+public record BanDaysResponseDto(
+    Long reportId,
     Integer banDays
 ) {
-    public static BanInfoResponseDto of(Integer banDays) {
-        return BanInfoResponseDto.builder()
+    public static BanDaysResponseDto of(Long reportId, Integer banDays) {
+        return BanDaysResponseDto.builder()
+                .reportId(reportId)
                 .banDays(banDays)
                 .build();
     }

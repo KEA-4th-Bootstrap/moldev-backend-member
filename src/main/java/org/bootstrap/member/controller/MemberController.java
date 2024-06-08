@@ -3,10 +3,7 @@ package org.bootstrap.member.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.bootstrap.member.dto.request.BanRequestDto;
-import org.bootstrap.member.dto.request.PasswordCheckRequestDto;
-import org.bootstrap.member.dto.request.PasswordPatchRequestDto;
-import org.bootstrap.member.dto.request.ProfilePatchRequestDto;
+import org.bootstrap.member.dto.request.*;
 import org.bootstrap.member.dto.response.*;
 import org.bootstrap.member.service.BanService;
 import org.bootstrap.member.service.MemberService;
@@ -134,9 +131,9 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/banInfoOfReport/{reportId}")
-    public ResponseEntity<BanInfoResponseDto> getBanInfoByReport(@PathVariable Long reportId) {
-        final BanInfoResponseDto responseDto = banService.getBanInfoOfReport(reportId);
+    @GetMapping("/banInfoOfReport")
+    public ResponseEntity<BanDaysListResponseDto> getBanInfoByReport(@RequestBody BanDaysRequestDto banDaysRequestDto) {
+        final BanDaysListResponseDto responseDto = banService.getBanInfoOfReport(banDaysRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 }
